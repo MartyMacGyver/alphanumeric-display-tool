@@ -19,9 +19,9 @@
 
 from __future__ import print_function
 
-try: # Python2
+try:  # Python2
     import Tkinter as tk
-except ImportError: # Python3
+except ImportError:  # Python3
     import tkinter as tk
 import logging
 import settings

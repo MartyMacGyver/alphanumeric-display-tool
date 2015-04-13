@@ -20,9 +20,9 @@
 
 from __future__ import print_function
 
-try: # Python2
+try:  # Python2
     import Tkinter as tk
-except ImportError: # Python3
+except ImportError:  # Python3
     import tkinter as tk
 import random
 import logging
@@ -36,7 +36,7 @@ class MainApplication(tk.Frame):
         tk.Frame.__init__(self, parent, bg=settings.APP_Color_Bgd, *args, **kwargs)
         self.parent = parent
         self.parent.title(settings.APP_Main_Title)
-        self.display = outputdisplay.OutputDisplay(self)
+        self.display = outputdisplay.OutputDisplay(self, showrepr=False)
         self.pack(side="top", fill="both", expand=True)
         self.scram_digits = []
         self.scram_running = False

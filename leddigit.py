@@ -19,19 +19,19 @@
 
 from __future__ import print_function
 
-try: # Python2
+try:  # Python2
     import Tkinter as tk
-except ImportError: # Python3
+except ImportError:  # Python3
     import tkinter as tk
 from collections import OrderedDict
 import logging
 import settings
 import config_alpha16dp
 
+DIGIT_REPR = config_alpha16dp.DIGIT_REPR_ALPHA_16_DP
 DIGIT_POLYS = config_alpha16dp.DIGIT_POLYS_ALPHA_16_DP
 DIGIT_BITMAP = config_alpha16dp.DIGIT_BITMAP_ALPHA_16_DP
 DIGIT_CHARMAP = config_alpha16dp.DIGIT_CHARMAP_ALPHA_16_DP
-DIGIT_REPR = config_alpha16dp.DIGIT_REPR_ALPHA_16_DP
 
 
 class LEDdigit(tk.Canvas):
@@ -61,9 +61,9 @@ class LEDdigit(tk.Canvas):
             xsum = 0.0
             ysum = 0.0
             for t in DIGIT_POLYS[seg_name]['pts']:
-                x = t[0] * scale[0]
+                x = t[0] * scale[0] + self.pad_nswe[0]
                 xsum += x
-                y = t[1] * scale[1]
+                y = t[1] * scale[1] + self.pad_nswe[2]
                 ysum += y
                 points.append((x, y))
             npts = len(DIGIT_POLYS[seg_name]['pts'])
@@ -88,8 +88,8 @@ class LEDdigit(tk.Canvas):
         self.reprbox_update()
         (x0, y0, x1, y1) = self.bbox("all")
         logging.debug("  - bbox = ({},{},{},{})".format(x0, y0, x1, y1))
-        height = (y1) + self.pad_nswe[0] + self.pad_nswe[1]
-        width = (x1) + self.pad_nswe[2] + self.pad_nswe[3]
+        height = (y1) + self.pad_nswe[1]
+        width = (x1) + self.pad_nswe[3]
         self.configure(width=width, height=height, bg=settings.LED_Color_Bgd)
 
     def char_to_segs(self, ch):
@@ -100,19 +100,22 @@ class LEDdigit(tk.Canvas):
             self.set_seg_state(seg_name, True if DIGIT_CHARMAP[idx] & mask else False)
 
     def reprbox_update(self):
-        repstr = self.segs_to_repr()
-        # repstr="0x{:04X}".format(self.segs_to_hex())
+        repstr = self.segs_to_repr_hex()
         if self.reprbox is not None:
             self.reprbox.delete(0, tk.END)
             self.reprbox.insert(0, repstr)
 
-    def segs_to_repr(self):
+    def segs_to_repr_bin(self):
         repstr = ''
         for seg_name in DIGIT_REPR:
             if seg_name == '':
                 repstr += ' '  # '-'
             else:
                 repstr += '1' if self.seg_state[seg_name] else '0'
+        return repstr
+
+    def segs_to_repr_hex(self):
+        repstr = "0x{:04X}".format(self.segs_to_hex())
         return repstr
 
     def segs_to_hex(self):

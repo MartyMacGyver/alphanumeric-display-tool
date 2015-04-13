@@ -19,9 +19,9 @@
 
 from __future__ import print_function
 
-try: # Python2
+try:  # Python2
     import Tkinter as tk
-except ImportError: # Python3
+except ImportError:  # Python3
     import tkinter as tk
 import logging
 import settings
@@ -31,7 +31,7 @@ import designwidget as dw
 
 class OutputDisplay(tk.Frame):
 
-    def __init__(self, parent=None, *args, **kwargs):
+    def __init__(self, parent=None, showrepr=False, *args, **kwargs):
         tk.Frame.__init__(self, parent, borderwidth=1, bg=settings.LED_Color_Oln, relief=tk.FLAT, *args, **kwargs)
         self.parent = parent
         self.grid(padx=10, pady=10, sticky='nswe')
@@ -45,21 +45,33 @@ class OutputDisplay(tk.Frame):
         col += 4
         self.button_dump = tk.Button(self, text='Dump', command=self._on_dump)
         self.button_dump.grid(row=row, column=col, padx=10, pady=10, sticky='nw', columnspan=1)
+        col = settings.DIGITS_PER_COL-2
+        self.button_dump = tk.Button(self, text='<---', command=self._on_scrollup)
+        self.button_dump.grid(row=row, column=col, padx=10, pady=10, sticky='nw', columnspan=1)
+        col = settings.DIGITS_PER_COL-1
+        self.button_dump = tk.Button(self, text='--->', command=self._on_scrolldn)
+        self.button_dump.grid(row=row, column=col, padx=10, pady=10, sticky='nw', columnspan=1)
         row += 1
         col = 0
         for i in range(settings.MAX_DIGITS):
-            self.sinfos[i] = tk.Entry(self, width=6, bd=2, font="Courier 6 normal", justify="center",
-                                      bg="gray25", fg="yellow",
-                                      disabledbackground="lightgray", disabledforeground="yellow",
-                                      highlightbackground="black", highlightcolor="red", highlightthickness=1)
-            self.leddisp[i] = leddigit.LEDdigit(self, digit=i, reprbox=self.sinfos[i],
+            reprbox = None
+            if showrepr:
+                reprbox = tk.Entry(self, width=6, bd=2, font="Courier 6 normal", justify="center",
+                                   bg="gray25", fg="yellow",
+                                   disabledbackground="lightgray", disabledforeground="yellow",
+                                   highlightbackground="black", highlightcolor="red", highlightthickness=1)
+                self.sinfos[i] = reprbox
+            self.leddisp[i] = leddigit.LEDdigit(self, digit=i, reprbox=reprbox,
                                                 outline=settings.LED_Color_Oln, activefill=None,
                                                 clickable=True)
             self.leddisp[i].grid(row=row + 0, column=col, padx=0, pady=0, columnspan=1)
-            self.sinfos[i].grid(row=row + 1, column=col, padx=0, pady=0, sticky='nswe', columnspan=1)
+            if showrepr:
+                self.sinfos[i].grid(row=row + 1, column=col, padx=0, pady=0, sticky='nswe', columnspan=1)
             col += 1
             if (col) % settings.DIGITS_PER_COL == 0:
-                row += 2
+                row += 1
+                if showrepr:
+                    row += 1
                 col = 0
 
     def _on_design(self):
@@ -81,3 +93,9 @@ class OutputDisplay(tk.Frame):
         if not logstr == '':
             logging.debug("    {} # ".format(logstr))
         pass
+
+    def _on_scrollup(self):
+        logging.debug("Scroll up")
+
+    def _on_scrolldn(self):
+        logging.debug("Scroll down")
