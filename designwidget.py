@@ -36,7 +36,7 @@ class DesignWidget(tk.Frame):
         if not self.IEXIST:
             tk.Frame.__init__(self, parent, borderwidth=1, bg=settings.LED_Color_Oln, relief=tk.FLAT, *args, **kwargs)
             self.IEXIST = True
-            self.top = tk.Toplevel(parent)
+            self.top = tk.Toplevel(self)
             self.top.title("Character Designer")
             self.label = tk.Label(self.top, text="Click the segments...")
             self.entry = tk.Entry(self.top)
