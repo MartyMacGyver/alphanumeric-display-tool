@@ -31,7 +31,7 @@ import settings
 class LEDdigit(tk.Canvas):
 
     def __init__(self, parent=None, reprbox=None, digit=None, clickable=False,
-                 outline=None, activefill=None, digitdefs=None, 
+                 outline=None, activefill=None, digitdefs=None,
                  scale=settings.LED_Scale, pad_nswe=settings.LED_Pad):
         tk.Canvas.__init__(self, parent, borderwidth=0, relief=tk.FLAT, highlightthickness=0)
         self.parent = parent
@@ -90,9 +90,13 @@ class LEDdigit(tk.Canvas):
     def char_to_segs(self, ch):
         self.curcharidx = ord(ch)
         for seg_name in self.digitdefs['bitmap']:
-            mask = 1 << (self.digitdefs['bitmap'][seg_name]['block'] * 4 + self.digitdefs['bitmap'][seg_name]['bit'])
-            self.set_seg_state(seg_name, True if self.digitdefs['charmap'][self.curcharidx] & mask else False)
+            self.set_seg_state(seg_name, self.mapped_seg_state(seg_name, self.curcharidx))
+            self.set_seg_color(seg_name)
         # logging.debug("{:d} 0x{:04X}".format(self.curcharidx, self.digitdefs['charmap'][self.curcharidx]))
+
+    def mapped_seg_state(self, seg_name, chidx):
+        mask = 1 << (self.digitdefs['bitmap'][seg_name]['block'] * 4 + self.digitdefs['bitmap'][seg_name]['bit'])
+        return True if self.digitdefs['charmap'][chidx] & mask else False
 
     def reprbox_update(self):
         repstr = self.segs_to_repr_hex()
@@ -123,18 +127,16 @@ class LEDdigit(tk.Canvas):
                 mask <<= 1
         return hexval
 
-    def set_seg_color(self, name, color):
+    def set_seg_color(self, name, color=None):
+        if color is None:
+            color = self.ledcoloron
         fill = color if self.seg_states[name] else settings.LED_Color_Off
         self.itemconfigure(self.seg_ids_to_names[name], fill=fill)
 
-    def set_seg_state(self, name, state):
-        self.seg_states[name] = state
-        fill = self.ledcoloron if self.seg_states[name] else settings.LED_Color_Off
-        self.itemconfigure(self.seg_ids_to_names[name], fill=fill)
+    def set_seg_state(self, name, state=None):
+        if state is not None:
+            self.seg_states[name] = state
         self.reprbox_update()
-
-    def get_seg_states(self):
-        return seg_states
 
     def _on_press(self, event):
         seg_id = event.widget.find_withtag('current')[0]

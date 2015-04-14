@@ -27,6 +27,7 @@ except ImportError:  # Python3
 import logging
 import settings
 import ledpanel
+import boxes
 
 
 class MainApplication(tk.Frame):
@@ -36,26 +37,31 @@ class MainApplication(tk.Frame):
         self.parent = parent
         self.parent.title(settings.APP_Main_Title)
         self.parent = parent
-        self.led_cols = 16
-        self.led_rows = 4
-        self.bufferlen = 256
+        self.led_cols = settings.PANEL_COLS
+        self.led_rows = settings.PANEL_ROWS
+        self.bufferlen = settings.PANEL_BUFFER
         self.design_widget = None
         self.outstr = ""
-        self.startindex=0
+        self.startindex = 0
+        self.aboutpopup = None
+        self.inputpopup = None
+        self.scram_colors = False
+        self.scram_segments = False
 
         menubar = tk.Menu(self)
+
         filemenu = tk.Menu(menubar, tearoff=False)
-        filemenu.add_command(label="Dump", command=self._on_dump)
-        filemenu.add_separator()
-        filemenu.add_command(label="Quit", command=parent.quit)
         menubar.add_cascade(label="File", menu=filemenu)
-        designmenu = tk.Menu(menubar, tearoff=False)
-        menubar.add_command(label="Dump", command=self._on_dump)
-        helpmenu = tk.Menu(menubar, tearoff=False)
+        filemenu.add_command(label="Quit", command=parent.quit)
+        menubar.add_command(label="Input", command=self._on_input)
         menubar.add_command(label="Test", command=self._on_test)
+        menubar.add_command(label="Dump", command=self._on_dump)
+        menubar.add_command(label="Random Colors", command=self._on_scramble_colors)
+        menubar.add_command(label="Scramble Segments", command=self._on_scramble_segments)
         helpmenu = tk.Menu(menubar, tearoff=False)
         menubar.add_cascade(label="Help", menu=helpmenu)
-        helpmenu.add_command(label="About", command=None)
+        helpmenu.add_command(label="About", command=self._on_about)
+
         parent.config(menu=menubar)
 
         self.ledpanel = ledpanel.LEDPanel(self, showrepr=False, bufferlen=self.bufferlen,
@@ -65,19 +71,41 @@ class MainApplication(tk.Frame):
         self.frame_nav = tk.Frame(self)
         self.button_scrollup = tk.Button(self.frame_nav, text='<---', command=self._on_scrollup)
         self.button_scrollup.pack(side='left')
+        self.label_scroll = tk.Label(self.frame_nav, width=16,
+            text="0x{:03x} / 0x{:03x}".format(self.startindex, self.bufferlen))
+        self.label_scroll.pack(side='left')
         self.button_scrolldn = tk.Button(self.frame_nav, text='--->', command=self._on_scrolldn)
         self.button_scrolldn.pack(side='left')
         self.frame_nav.pack(side='right')
 
     def runme(self):
-        self.scram_digits = []
-        self.scram_running = False
+        self.ledpanel.update_display(self.outstr, self.startindex)
+
+    def _on_scramble_colors(self):
+        self.scram_colors = not self.scram_colors
+        self.ledpanel.scramble_colors(self.scram_colors)
+
+    def _on_scramble_segments(self):
+        self.scram_segments = not self.scram_segments
+        self.ledpanel.scramble_segments(self.scram_segments)
+
+    def _on_about(self):
+        if self.aboutpopup is None or not self.aboutpopup.isalive():
+            self.aboutpopup = boxes.AboutBox()
+
+    def _on_input(self):
+        if self.inputpopup is None or not self.inputpopup.isalive():
+            self.inputpopup = boxes.InputBox(text=self.outstr, callback=self._on_input_result)
+
+    def _on_input_result(self, astring):
+        logging.debug("Got result: {}".format(astring))
+        self.outstr = astring
         self.ledpanel.update_display(self.outstr, self.startindex)
 
     def _on_test(self):
         logging.debug("Filling with test chars".format())
         self.outstr = ''.join([chr(x) for x in range(0,256)])
-        self.ledpanel.update_display(self.outstr, 0)
+        self.ledpanel.update_display(self.outstr, self.startindex)
 
     def _on_dump(self):
         logging.debug("Dump digit hexvals".format())
@@ -97,6 +125,7 @@ class MainApplication(tk.Frame):
             self.startindex = 0
         if not self.startindex == oldindex:
             self.ledpanel.update_display(self.outstr, self.startindex)
+            self.label_scroll.config(text="0x{:03x} / 0x{:03x}".format(self.startindex, self.bufferlen))
         logging.debug("Scroll up: start = {}".format(self.startindex))
 
     def _on_scrolldn(self):
@@ -106,6 +135,7 @@ class MainApplication(tk.Frame):
             self.startindex -= self.led_cols
         if not self.startindex == oldindex:
             self.ledpanel.update_display(self.outstr, self.startindex)
+            self.label_scroll.config(text="0x{:03x} / 0x{:03x}".format(self.startindex, self.bufferlen))
         logging.debug("Scroll down: start = {}".format(self.startindex))
 
 if __name__ == "__main__":
