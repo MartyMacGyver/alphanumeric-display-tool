@@ -36,12 +36,11 @@ class MainApplication(tk.Frame):
         tk.Frame.__init__(self, parent, bg=settings.APP_Color_Bgd, *args, **kwargs)
         self.parent = parent
         self.parent.title(settings.APP_Main_Title)
-        self.parent = parent
         self.led_cols = settings.PANEL_COLS
         self.led_rows = settings.PANEL_ROWS
         self.bufferlen = settings.PANEL_BUFFER
         self.design_widget = None
-        self.outstr = ""
+        self.outstr = ''
         self.startindex = 0
         self.aboutpopup = None
         self.inputpopup = None
@@ -53,11 +52,15 @@ class MainApplication(tk.Frame):
         filemenu = tk.Menu(menubar, tearoff=False)
         menubar.add_cascade(label="File", menu=filemenu)
         filemenu.add_command(label="Quit", command=parent.quit)
-        menubar.add_command(label="Input", command=self._on_input)
-        menubar.add_command(label="Test", command=self._on_test)
-        menubar.add_command(label="Dump", command=self._on_dump)
-        menubar.add_command(label="Random Colors", command=self._on_scramble_colors)
-        menubar.add_command(label="Scramble Segments", command=self._on_scramble_segments)
+
+        ctrlmenu = tk.Menu(menubar, tearoff=False)
+        menubar.add_cascade(label="Control", menu=ctrlmenu)
+        ctrlmenu.add_command(label="Input", command=self._on_input)
+        ctrlmenu.add_command(label="Test", command=self._on_test)
+        ctrlmenu.add_command(label="Dump", command=self._on_dump)
+        ctrlmenu.add_command(label="Random Colors", command=self._on_scramble_colors)
+        ctrlmenu.add_command(label="Scramble Segments", command=self._on_scramble_segments)
+
         helpmenu = tk.Menu(menubar, tearoff=False)
         menubar.add_cascade(label="Help", menu=helpmenu)
         helpmenu.add_command(label="About", command=self._on_about)
