@@ -75,7 +75,8 @@ class MainApplication(tk.Frame):
         self.button_scrollup = tk.Button(self.frame_nav, text='<---', command=self._on_scrollup)
         self.button_scrollup.pack(side='left')
         self.label_scroll = tk.Label(self.frame_nav, width=16,
-            text="0x{:03x} / 0x{:03x}".format(self.startindex, self.bufferlen))
+                                     text="0x{:03x} / 0x{:03x}".
+                                     format(self.startindex, self.bufferlen))
         self.label_scroll.pack(side='left')
         self.button_scrolldn = tk.Button(self.frame_nav, text='--->', command=self._on_scrolldn)
         self.button_scrolldn.pack(side='left')
@@ -107,7 +108,7 @@ class MainApplication(tk.Frame):
 
     def _on_test(self):
         logging.debug("Filling with test chars".format())
-        self.outstr = ''.join([chr(x) for x in range(0,256)])
+        self.outstr = ''.join([chr(x) for x in range(0, 256)])
         self.ledpanel.update_display(self.outstr, self.startindex)
 
     def _on_dump(self):
