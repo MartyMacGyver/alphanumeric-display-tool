@@ -4,6 +4,8 @@
 
 Run: python alphanumeric-display-tool.pyw
 
+![Sample screenshot](/docs/screenshot.jpg?raw=true)
+
 This was specifically created to help design character sets for use with 16-segment displays (particularly an HT1622-based display), but I'm working on other display formats as well.
 
 More info on that related project:
