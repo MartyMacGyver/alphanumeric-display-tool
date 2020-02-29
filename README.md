@@ -13,7 +13,7 @@ https://github.com/MartyMacGyver/LCD_HT1622_16SegLcd
 
 Features:
 * Edit multi-segment segment display definitions in-place
-* Works with Python 2.7 and 3.4+
+* Best with Python 3.6+
 * Requires Tk (for Tkinter)
 * Use "Dump" to dump to the console window (if present)
 

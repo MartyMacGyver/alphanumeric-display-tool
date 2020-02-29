@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-#   Copyright (c) 2015 Martin F. Falatic
+#   Copyright (c) 2015-2020 Martin F. Falatic
 #
 #   Licensed under the Apache License, Version 2.0 (the "License");
 #   you may not use this file except in compliance with the License.
@@ -14,16 +14,8 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
-"""
 
-"""
-
-from __future__ import print_function
-
-try:  # Python2
-    import Tkinter as tk
-except ImportError:  # Python3
-    import tkinter as tk
+import tkinter as tk
 import logging
 import settings
 import ledpanel
@@ -141,6 +133,7 @@ class MainApplication(tk.Frame):
             self.ledpanel.update_display(self.outstr, self.startindex)
             self.label_scroll.config(text="0x{:03x} / 0x{:03x}".format(self.startindex, self.bufferlen))
         logging.debug("Scroll down: start = {}".format(self.startindex))
+
 
 if __name__ == "__main__":
     logging.basicConfig(filename='', level=logging.DEBUG)

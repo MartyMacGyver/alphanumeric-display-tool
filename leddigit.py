@@ -1,5 +1,5 @@
 
-#   Copyright (c) 2015 Martin F. Falatic
+#   Copyright (c) 2015-2020 Martin F. Falatic
 #
 #   Licensed under the Apache License, Version 2.0 (the "License");
 #   you may not use this file except in compliance with the License.
@@ -13,16 +13,8 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
-"""
 
-"""
-
-from __future__ import print_function
-
-try:  # Python2
-    import Tkinter as tk
-except ImportError:  # Python3
-    import tkinter as tk
+import tkinter as tk
 from collections import OrderedDict
 import logging
 import settings

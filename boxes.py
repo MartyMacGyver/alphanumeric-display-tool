@@ -1,5 +1,5 @@
 
-#   Copyright (c) 2015 Martin F. Falatic
+#   Copyright (c) 2015-2020 Martin F. Falatic
 #
 #   Licensed under the Apache License, Version 2.0 (the "License");
 #   you may not use this file except in compliance with the License.
@@ -13,16 +13,8 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
-"""
 
-"""
-
-from __future__ import print_function
-
-try:  # Python2
-    import Tkinter as tk
-except ImportError:  # Python3
-    import tkinter as tk
+import tkinter as tk
 import logging
 import settings
 
@@ -90,7 +82,7 @@ class AboutBox(tk.Frame):
 
             self.top.title("About")
             self.top.protocol("WM_DELETE_WINDOW", self._on_ok)
-            self.label = tk.Label(self.top, text=settings.APP_Main_Title)
+            self.label = tk.Label(self.top, text=f"{settings.APP_Main_Title}\nby Martin F. Falatic")
             self.label.pack()
             self.button_ok = tk.Button(self.top, text='OK', command=self._on_ok)
             self.button_ok.pack()
